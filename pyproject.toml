@@ -6,12 +6,17 @@ requires = ["setuptools>=42", "wheel", "setuptools_scm[tomli]>=6.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "foo"
+name = "sc4002"
 version = "0.1.0"
 authors = [
-    { name = "Your Name", email = "youremail@123.com" },
+    { name = "Kaichen Zhang", email = "zhan0564@e.ntu.edu.sg" },
+    { name = "Fanyi Pu", email = "FPU001@e.ntu.edu.sg" },
+    { name = "Ruixiao Zeng", email = "zeng0146@e.ntu.edu.sg" },
+    { name = "Yi Shan", email = "sh0005yi@e.ntu.edu.sg" },
+    { name = "Yutong Tang", email = "tang0513@e.ntu.edu.sg" },
+    { name = "Jiahua Zhang", email = "jzhang132@e.ntu.edu.sg" },
 ]
-description = "A python template"
+description = "SC4002 Project"
 readme = "README.md"
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -40,10 +45,8 @@ exclude = [
 ]
 
 [project.scripts]
-foo = "foo.__main__:main"
-foo-func1 = "foo.__main__:func1"
-foo-func2 = "foo.__main__:func2"
+run = "sc4002.__main__:main"
 
 [project.urls]
-Homepage = "https://xxx.github.io"
-Repository = "https://github.com/xxx/yyy"
+Homepage = "https://pufanyi.github.io/SC4002-Project/"
+Repository = "https://github.com/pufanyi/SC4002-Project"
