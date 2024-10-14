@@ -1,16 +1,13 @@
-def func1():
-    print("Hello from func1")
-
-
-def func2():
-    print("Hello from func2")
+import pandas as pd
+import datasets
 
 
 def main():
-    func1()
-    func2()
+    dataset = datasets.load_dataset("rotten_tomatoes")
+    print(dataset)
+    train_df = dataset["train"].to_pandas()
+    print(train_df.head())
 
 
 if __name__ == "__main__":
-    func1()
-    func2()
+    main()
