@@ -9,13 +9,8 @@ class BaseModel(torch.nn.Module):
         self.model_name = model_name
 
     @abstractmethod
-    def forward(self, *args, **kwargs):
+    def device():
         raise NotImplementedError
 
-    @abstractmethod
-    def encode(self, *args, **kwargs):
-        raise NotImplementedError
 
-    @abstractmethod
-    def decode(self, *args, **kwargs):
-        raise NotImplementedError
+# Add any function or attribute that are common to all models here
