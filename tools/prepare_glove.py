@@ -35,13 +35,14 @@ def extract_zip_files(file_name: str, dir_name: str):
 
 
 def prepare_weights_and_tokenizer(file_name: str):
+    d = int(file_name.split(".")[-2][:-1])
     with open(file_name, "r") as f:
         lines = [line.rstrip() for line in f]
 
     weights = []
     tokenizer = {}
     for idx, line in enumerate(tqdm(lines, desc="Processing weights and tokens..")):
-        data = line.split()
+        data = line.rsplit(" ", d + 1)
         word = data[0]
         vector = data[1:]
         vector = [float(v) for v in vector]
@@ -58,7 +59,13 @@ if __name__ == "__main__":
         dir_name = extract_zip_files(file_name, dir_name=f"./checkpoints/{file}")
         downloaded_weights = glob.glob(f"./checkpoints/{file}/*.txt")
         for weight in downloaded_weights:
-            embeddings, tokenizer = prepare_weights_and_tokenizer(weight)
-            save_model(embeddings, weight.replace(".txt", ".safetensors"))
-            with open(weight.replace(".txt", ".tokenizer.json"), "w") as f:
-                json.dump(tokenizer, f)
+            safetensors_file_name = weight.replace(".txt", ".safetensors")
+            tokenizer_file_name = weight.replace(".txt", ".tokenizer.json")
+            if not os.path.exists(safetensors_file_name) or not os.path.exists(tokenizer_file_name):
+                embeddings, tokenizer = prepare_weights_and_tokenizer(weight)
+                save_model(embeddings, safetensors_file_name)
+                with open(tokenizer_file_name, "w") as f:
+                    json.dump(tokenizer, f)
+            else:
+                print(f"{safetensors_file_name} already exists")
+                print(f"{tokenizer_file_name} already exists")
