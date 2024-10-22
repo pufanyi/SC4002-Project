@@ -28,6 +28,10 @@ license = { text = "MIT" }
 dependencies = [
     "pandas==2.2.3",
     "datasets==3.0.1",
+    "sentence-transformers",
+    "torch",
+    "safetensors",
+    "tqdm",
 ]
 
 [project.optional-dependencies]
