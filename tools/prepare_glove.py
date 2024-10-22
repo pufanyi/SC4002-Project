@@ -55,7 +55,7 @@ def prepare_weights_and_tokenizer(file_name: str):
 
 if __name__ == "__main__":
     for file in FILES:
-        file_name = download_glove_weights(file + ".zip", save_path="./checkpoints")
+        file_name = download_glove_weights(f"{file}.zip", save_path="./checkpoints")
         dir_name = extract_zip_files(file_name, dir_name=f"./checkpoints/{file}")
         downloaded_weights = glob.glob(f"./checkpoints/{file}/*.txt")
         for weight in downloaded_weights:
