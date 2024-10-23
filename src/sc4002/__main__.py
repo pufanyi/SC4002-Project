@@ -4,7 +4,7 @@ import pandas as pd
 
 def main():
     dataset = datasets.load_dataset("rotten_tomatoes")
-    print(     dataset     )
+    print(dataset)
     train_df = dataset["train"].to_pandas()
     print(train_df.head())
 
