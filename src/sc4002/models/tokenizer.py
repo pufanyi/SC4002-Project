@@ -25,10 +25,8 @@ class Tokenizer:
         return len(self.tokenizer_dict) + 1
 
     def encode(self, inputs: List[str], return_tensor: str = "pt"):
-        tokens = []
-        for s in inputs:
-            tokens.append(self.greedy_match(s.lower()))
-        max_len = max([len(t) for t in tokens])
+        tokens = [self.greedy_match(s.lower()) for s in inputs]
+        max_len = max(len(t) for t in tokens)
         tokens = [t + [self.pad_id] * (max_len - len(t)) for t in tokens]
 
         if return_tensor == "pt":
