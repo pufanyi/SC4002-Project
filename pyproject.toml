@@ -34,6 +34,7 @@ dependencies = [
     "tqdm",
     "hf_transfer",
     "loguru",
+    "transformers==4.45.2",
 ]
 
 [project.optional-dependencies]
