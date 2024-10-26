@@ -19,6 +19,13 @@ class TestGlove(unittest.TestCase):
         for idx, word in enumerate(words):
             assert word.strip().lower() == inputs[idx].strip().lower()
 
+    def testGlove(self):
+        inputs = ["Have a nice day !", "Say hello to the world"]
+        embeds = self.glove(inputs)
+        assert embeds.shape[0] == 2
+        assert embeds.shape[1] == 5
+        assert embeds.shape[2] == 300
+
 
 if __name__ == "__main__":
     unittest.main()
