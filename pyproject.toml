@@ -33,6 +33,7 @@ dependencies = [
     "safetensors",
     "tqdm",
     "hf_transfer",
+    "loguru",
 ]
 
 [project.optional-dependencies]
