@@ -24,8 +24,11 @@ class Glove(BaseModel):
     def vocab_size(self):
         return self._vocab_size
 
-    def forward(self, inputs: List[str], **kwargs):
-        input_ids = self.tokenizer.encode(inputs, return_tensor="pt")
+    def forward(self, inputs: List[str] = None, input_ids=None, **kwargs):
+        if inputs is None and input_ids is None:
+            assert False, "input and input_ids can not both be None"
+        if input_ids is None:
+            input_ids = self.tokenizer.encode(inputs, return_tensor="pt")
         embeddings = self.embedding(input_ids)
         return embeddings
 
