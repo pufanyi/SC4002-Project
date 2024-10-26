@@ -35,6 +35,7 @@ dependencies = [
     "hf_transfer",
     "loguru",
     "transformers==4.45.2",
+    "accelerate"
 ]
 
 [project.optional-dependencies]
