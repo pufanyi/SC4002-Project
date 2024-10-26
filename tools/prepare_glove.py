@@ -17,7 +17,12 @@ def download_glove_weights(file_name: str, save_path: str):
     """
     if not os.path.exists(os.path.join(save_path, file_name)):
         os.makedirs(save_path, exist_ok=True)
-        subprocess.run([f"wget https://nlp.stanford.edu/data/{file_name} -O {os.path.join(save_path, file_name)}"], shell=True)
+        subprocess.run(
+            [
+                f"wget https://nlp.stanford.edu/data/{file_name} -O {os.path.join(save_path, file_name)}"
+            ],
+            shell=True,
+        )
     else:
         print(f"{file_name} already exists")
     return os.path.join(save_path, file_name)
@@ -61,7 +66,9 @@ if __name__ == "__main__":
         for weight in downloaded_weights:
             safetensors_file_name = weight.replace(".txt", ".safetensors")
             tokenizer_file_name = weight.replace(".txt", ".tokenizer.json")
-            if not os.path.exists(safetensors_file_name) or not os.path.exists(tokenizer_file_name):
+            if not os.path.exists(safetensors_file_name) or not os.path.exists(
+                tokenizer_file_name
+            ):
                 embeddings, tokenizer = prepare_weights_and_tokenizer(weight)
                 save_model(embeddings, safetensors_file_name)
                 with open(tokenizer_file_name, "w") as f:

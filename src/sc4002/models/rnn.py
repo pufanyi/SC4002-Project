@@ -7,13 +7,23 @@ from .glove import Glove
 
 
 class RNN(BaseModel):
-    def __init__(self, input_dim: int = 300, hidden_dim: int = 512, output_dim: int = 2, model_name: str = "rnn", ckpt_path: str = None, tokenizer_path: str = None, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        input_dim: int = 300,
+        hidden_dim: int = 512,
+        output_dim: int = 2,
+        model_name: str = "rnn",
+        ckpt_path: str = None,
+        tokenizer_path: str = None,
+        *args,
+        **kwargs,
+    ) -> None:
         super().__init__(model_name, *args, **kwargs)
         self.word_embedding = Glove(ckpt_path=ckpt_path, tokenizer_path=tokenizer_path)
         self.rnn = nn.RNN(input_size=input_dim, hidden_size=hidden_dim)
         self.linear_head = nn.Linear(hidden_dim, output_dim)
 
-    def forward(self, inputs: List[str] = None, input_ids=None):
+    def forward(self, inputs: List[str] = None, input_ids=None, **kwargs):
         if inputs is None and input_ids is None:
             assert False, "input and input_ids can not both be None"
         if input_ids is None:

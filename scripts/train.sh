@@ -10,9 +10,12 @@ python3 -m sc4002.train.train \
     --output_dir ./checkpoints \
     --report_to wandb \
     --model_type rnn \
+    --eval_strategy epoch \
     --logging_steps 1 \
+    --label_names "labels" \
+    --learning_rate 1e-5 \
+    --num_train_epochs 10 \
     --run_name $RUN_NAME
     # --lr_scheduler_type "cosine" \
-    # --learning_rate 1e-6 \
     # --weight_decay 0. \
     # --warmup_ratio 0.03

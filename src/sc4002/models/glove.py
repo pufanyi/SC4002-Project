@@ -9,7 +9,14 @@ from .tokenizer import Tokenizer
 
 
 class Glove(BaseModel):
-    def __init__(self, model_name: str = "glove", ckpt_path: str = None, tokenizer_path: str = None, *args, **kwargs) -> None:
+    def __init__(
+        self,
+        model_name: str = "glove",
+        ckpt_path: str = None,
+        tokenizer_path: str = None,
+        *args,
+        **kwargs,
+    ) -> None:
         super().__init__(model_name, *args, **kwargs)
         state_dict = load_file(ckpt_path)
         self._vocab_size, self.dim = state_dict["weight"].shape

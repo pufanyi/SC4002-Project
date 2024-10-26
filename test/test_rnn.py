@@ -8,8 +8,12 @@ from sc4002.models import RNN
 class TestGlove(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        tokenizer_path = hf_hub_download(repo_id="kcz358/glove", filename="glove.6B/glove.6B.300d.tokenizer.json")
-        checkpoint_path = hf_hub_download(repo_id="kcz358/glove", filename="glove.6B/glove.6B.300d.safetensors")
+        tokenizer_path = hf_hub_download(
+            repo_id="kcz358/glove", filename="glove.6B/glove.6B.300d.tokenizer.json"
+        )
+        checkpoint_path = hf_hub_download(
+            repo_id="kcz358/glove", filename="glove.6B/glove.6B.300d.safetensors"
+        )
         cls.rnn = RNN(ckpt_path=checkpoint_path, tokenizer_path=tokenizer_path)
 
     def testForward(self):
