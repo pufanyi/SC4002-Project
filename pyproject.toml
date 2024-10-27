@@ -29,7 +29,7 @@ dependencies = [
     "pandas==2.2.3",
     "datasets==3.0.1",
     "sentence-transformers",
-    "torch==2.5.0",
+    "torch",
     "safetensors",
     "tqdm",
     "hf_transfer",

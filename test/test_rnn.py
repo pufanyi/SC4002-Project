@@ -19,7 +19,7 @@ class TestGlove(unittest.TestCase):
     def testForward(self):
         inputs = ["Have a nice day !", "Say hello to the world"]
         outputs = self.rnn(inputs)
-        self.assertAlmostEqual(outputs.sum(), 2)
+        self.assertAlmostEqual(float(outputs.sum()), 2)
 
 
 if __name__ == "__main__":
