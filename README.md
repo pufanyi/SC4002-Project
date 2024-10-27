@@ -13,16 +13,13 @@ python -m pip install -e .
 
 ## Training
 
-Before training, make sure to activate the `wandb`.
+Before training, make sure to activate the [Weights & Biases](https://wandb.ai/).
 
 ```bash
-python -m pip install wandb
-
-export WANDB_API_KEY=<YOUR_WANDB_KEY>
-export WANDB_PROJECT=<YOUR_PROJECT>
-export WANDB_ENTITY=<YOUR_USER_NAME>
-export WANDB_MODE=online
+wandb login
 ```
+
+After that, you can run the training script.
 
 ```bash
 sh scripts/train.sh
