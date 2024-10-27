@@ -6,6 +6,7 @@ from datasets import load_dataset
 from huggingface_hub import hf_hub_download
 from transformers import HfArgumentParser, Trainer, TrainingArguments
 
+from sc4002.eval import compute_acc
 from sc4002.models import RNN, Tokenizer
 from sc4002.train.trainer import CustomTrainer
 
@@ -26,6 +27,7 @@ class DataArguments:
     dataset_name: str = field(default="rotten_tomatoes")
     train_split: str = field(default="train")
     val_split: str = field(default="validation")
+    test_split: str = field(default="test")
 
 
 @dataclass
@@ -90,7 +92,9 @@ def main():
     train_dataset = dataset[data_args.train_split]
     train_dataset = train_dataset.map(preprocess)
     eval_dataset = dataset[data_args.val_split]
-    eval_dataset = train_dataset.map(preprocess)
+    eval_dataset = eval_dataset.map(preprocess)
+    test_dataset = dataset[data_args.test_split]
+    test_dataset = test_dataset.map(preprocess)
     collator = DataCollator(tokenizer=tokenizer)
     trainer = CustomTrainer(
         model,
@@ -98,9 +102,11 @@ def main():
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         data_collator=collator,
+        compute_metrics=compute_acc,
     )
 
     trainer.train()
+    test_output = trainer.predict(test_dataset)
 
 
 if __name__ == "__main__":
