@@ -11,10 +11,21 @@ conda activate sc4002
 python -m pip install -e .
 ```
 
-## Run
+## Training
+
+Before training, make sure to activate the `wandb`.
 
 ```bash
-python -m sc4002
+python -m pip install wandb
+
+export WANDB_API_KEY=<YOUR_WANDB_KEY>
+export WANDB_PROJECT=<YOUR_PROJECT>
+export WANDB_ENTITY=<YOUR_USER_NAME>
+export WANDB_MODE=online
+```
+
+```bash
+sh scripts/train.sh
 ```
 
 ## Test
