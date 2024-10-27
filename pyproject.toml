@@ -32,6 +32,11 @@ dependencies = [
     "torch",
     "safetensors",
     "tqdm",
+    "hf_transfer",
+    "loguru",
+    "transformers==4.45.2",
+    "accelerate",
+    "evaluate"
 ]
 
 [project.optional-dependencies]

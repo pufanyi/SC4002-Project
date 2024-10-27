@@ -11,10 +11,18 @@ conda activate sc4002
 python -m pip install -e .
 ```
 
-## Run
+## Training
+
+Before training, make sure to activate the [Weights & Biases](https://wandb.ai/).
 
 ```bash
-python -m sc4002
+wandb login
+```
+
+After that, you can run the training script.
+
+```bash
+sh scripts/train.sh
 ```
 
 ## Test
