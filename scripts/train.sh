@@ -15,6 +15,7 @@ python3 -m sc4002.train.train \
     --label_names "labels" \
     --learning_rate 1e-5 \
     --num_train_epochs 10 \
+    --freeze_word_embed \
     --run_name $RUN_NAME
     # --lr_scheduler_type "cosine" \
     # --weight_decay 0. \

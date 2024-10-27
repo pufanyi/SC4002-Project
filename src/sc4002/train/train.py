@@ -18,6 +18,7 @@ class ModelArguments:
     download_repo: str = field(default="kcz358/glove")
     tokenizer_path: str = field(default="glove.6B/glove.6B.300d.tokenizer.json")
     word_embed_path: str = field(default="glove.6B/glove.6B.300d.safetensors")
+    freeze_word_embed: bool = field(default=False)
 
 
 @dataclass
@@ -75,6 +76,10 @@ def main():
             ckpt_path=checkpoint_path,
         )
     tokenizer = model.word_embedding.tokenizer
+
+    if model_args.freeze_word_embed:
+        for p in model.word_embedding.parameters():
+            p.requires_grad = False
 
     # Preprocess into input_ids
     def preprocess(example):
