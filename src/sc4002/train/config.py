@@ -1,4 +1,7 @@
 from dataclasses import dataclass, field
+from typing import Optional
+
+from transformers import TrainingArguments
 
 
 @dataclass
@@ -18,3 +21,7 @@ class DataArguments:
     train_split: str = field(default="train")
     val_split: str = field(default="validation")
     test_split: str = field(default="test")
+
+
+class CustomTrainingArguments(TrainingArguments):
+    sweep_config: Optional[str] = field(default=None)

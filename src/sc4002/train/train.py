@@ -5,7 +5,7 @@ from transformers import HfArgumentParser, TrainingArguments
 
 from sc4002.eval import compute_acc
 from sc4002.models import RNN
-from sc4002.train.config import DataArguments, ModelArguments
+from sc4002.train.config import CustomTrainingArguments, DataArguments, ModelArguments
 from sc4002.train.trainer import CustomTrainer
 from sc4002.train.utils import DataCollator, get_model, preprocess_dataset
 
@@ -15,7 +15,7 @@ def main():
     # or by passing the --help flag to this script.
     # We now keep distinct sets of args, for a cleaner separation of concerns.
 
-    parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
+    parser = HfArgumentParser((ModelArguments, DataArguments, CustomTrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     tokenizer_path = hf_hub_download(
         repo_id=model_args.download_repo, filename=model_args.tokenizer_path
