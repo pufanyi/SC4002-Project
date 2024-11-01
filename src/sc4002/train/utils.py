@@ -52,6 +52,7 @@ def preprocess_dataset(
     eval_dataset = eval_dataset.map(preprocess)
     test_dataset = dataset[test_split]
     test_dataset = test_dataset.map(preprocess)
+    return train_dataset, eval_dataset, test_dataset
 
 
 def get_model(
