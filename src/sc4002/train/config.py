@@ -23,5 +23,7 @@ class DataArguments:
     test_split: str = field(default="test")
 
 
+@dataclass
 class CustomTrainingArguments(TrainingArguments):
     sweep_config: Optional[str] = field(default=None)
+    sweep_count: Optional[int] = field(default=20)
