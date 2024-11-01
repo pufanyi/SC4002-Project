@@ -53,7 +53,8 @@ class DataCollator:
         input_ids = self.pad_sequence(
             input_ids, batch_first=True, padding_value=self.tokenizer.pad_id
         )
-        return dict(input_ids=input_ids, labels=labels)
+        masks = input_ids.ne(self.tokenizer.pad_id)
+        return dict(input_ids=input_ids, labels=labels, masks=masks)
 
 
 def main():
