@@ -36,7 +36,8 @@ dependencies = [
     "loguru",
     "transformers==4.45.2",
     "accelerate",
-    "evaluate"
+    "evaluate",
+    "torchtyping",
 ]
 
 [project.optional-dependencies]
