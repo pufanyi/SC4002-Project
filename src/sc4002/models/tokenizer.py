@@ -1,4 +1,4 @@
-import json
+import orjson
 from typing import List, Union
 
 import torch
@@ -10,8 +10,8 @@ class Tokenizer:
         tokenizer_path: str = "glove.840B.300d/glove.840B.300d.tokenizer.json",
         pad_side: str = "right",
     ) -> None:
-        with open(tokenizer_path, "r") as f:
-            self.tokenizer_dict = json.load(f)
+        with open(tokenizer_path, "rb") as f:
+            self.tokenizer_dict = orjson.loads(f.read())
         self.ids_to_tokens = {v: k for k, v in self.tokenizer_dict.items()}
         self.unk_token = "<|UNK|>"
         self.unk_id = len(self.tokenizer_dict)
@@ -20,14 +20,14 @@ class Tokenizer:
         self.pad_id = len(self.tokenizer_dict) + 1
         self.ids_to_tokens[self.unk_id] = self.unk_token
         self.ids_to_tokens[self.pad_id] = self.pad_token
+        self._vocab_size = len(self.tokenizer_dict) + 2
 
     def known_word(self, word: str):
         return word.lower() in self.tokenizer_dict
 
     @property
     def vocab_size(self):
-        # +1 UNK token
-        return len(self.tokenizer_dict) + 1
+        return self._vocab_size
 
     def encode(self, inputs: List[str], return_tensor: str = "pt"):
         tokens = [self.greedy_match(s.lower()) for s in inputs]
@@ -79,3 +79,9 @@ class Tokenizer:
         for idx in input_id:
             decode_list.append(self.ids_to_tokens[idx])
         return " | ".join(decode_list)
+
+    def add_new_word(self, word: str):
+        self.tokenizer_dict[word] = self._vocab_size
+        self.ids_to_tokens[self._vocab_size] = word
+        self._vocab_size += 1
+        return self._vocab_size - 1

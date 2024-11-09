@@ -9,7 +9,7 @@ class BaseModel(torch.nn.Module):
         self.model_name = model_name
 
     @abstractmethod
-    def device():
+    def forward(**kwargs):
         raise NotImplementedError
 
 

@@ -18,7 +18,7 @@ class Glove(BaseModel):
         **kwargs,
     ) -> None:
         super().__init__(model_name, *args, **kwargs)
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.device = torch.device("cpu")
         state_dict = load_file(ckpt_path)
         self._vocab_size, self.dim = state_dict["weight"].shape
         self.embedding = torch.nn.Embedding.from_pretrained(state_dict["weight"])
@@ -27,7 +27,11 @@ class Glove(BaseModel):
         self.add_embedding()
         # Add pad token embedding, does not contribute
         self.add_embedding(padding=True)
-        self.embedding.to(self.device)
+
+    def to(self, device: Union[str, torch.device]):
+        self.embedding.to(device)
+        self.device = device
+        return self
 
     @property
     def vocab_size(self):
@@ -41,14 +45,19 @@ class Glove(BaseModel):
             assert False, "input and input_ids can not both be None"
         if input_ids is None:
             input_ids = self.tokenizer.encode(inputs, return_tensor="pt")
-        input_ids = input_ids.to(self.device)
         embeddings = self.embedding(input_ids)
         return embeddings
 
-    def add_embedding(self, padding=False):
+    def add_embedding(self, padding=False, init_method: str = "zeros"):
         params = torch.zeros(1, self.dim)
+        if init_method == "xavier":
+            torch.nn.init.xavier_uniform_(params)
         self.embedding.weight.data = torch.concat([self.embedding.weight.data, params])
         if padding:
             self.embedding.padding_idx = self.vocab_size
         self.embedding.num_embeddings += 1
         self._vocab_size += 1
+
+    def add_new_word(self, word: str):
+        self.add_embedding(init_method="xavier")
+        self.tokenizer.add_new_word(word)

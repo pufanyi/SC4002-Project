@@ -3,6 +3,7 @@ import json
 import os
 import subprocess
 import zipfile
+import orjson
 
 import torch
 from safetensors.torch import save_model
@@ -67,8 +68,9 @@ if __name__ == "__main__":
             if not os.path.exists(safetensors_file_name) or not os.path.exists(tokenizer_file_name):
                 embeddings, tokenizer = prepare_weights_and_tokenizer(weight)
                 save_model(embeddings, safetensors_file_name)
-                with open(tokenizer_file_name, "w") as f:
-                    json.dump(tokenizer, f)
+                with open(tokenizer_file_name, "wb") as f:
+                    # json.dump(tokenizer, f)
+                    f.write(orjson.dumps(tokenizer))
             else:
                 print(f"{safetensors_file_name} already exists")
                 print(f"{tokenizer_file_name} already exists")

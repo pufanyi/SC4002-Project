@@ -3,10 +3,11 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import torch.nn as nn
 from torch import nn
 from transformers import Trainer
+from sc4002.models.base_model import BaseModel
 
 
 class CustomTrainer(Trainer):
-    def compute_loss(self, model, inputs, return_outputs=False):
+    def compute_loss(self, model: BaseModel, inputs, return_outputs=False):
         input_ids = inputs["input_ids"]
         labels = inputs["labels"]
         masks = inputs["masks"]
