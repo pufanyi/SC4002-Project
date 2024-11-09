@@ -25,12 +25,8 @@ def main():
     def train_sweep(config=None):
         with wandb.init(config=config):
             config = wandb.config
-            tokenizer_path = hf_hub_download(
-                repo_id=model_args.download_repo, filename=model_args.tokenizer_path
-            )
-            checkpoint_path = hf_hub_download(
-                repo_id=model_args.download_repo, filename=model_args.word_embed_path
-            )
+            tokenizer_path = hf_hub_download(repo_id=model_args.download_repo, filename=model_args.tokenizer_path)
+            checkpoint_path = hf_hub_download(repo_id=model_args.download_repo, filename=model_args.word_embed_path)
 
             model = get_model(model_args, tokenizer_path, checkpoint_path)
             tokenizer = model.word_embedding.tokenizer

@@ -17,12 +17,8 @@ def main():
 
     parser = HfArgumentParser((ModelArguments, DataArguments, CustomTrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
-    tokenizer_path = hf_hub_download(
-        repo_id=model_args.download_repo, filename=model_args.tokenizer_path
-    )
-    checkpoint_path = hf_hub_download(
-        repo_id=model_args.download_repo, filename=model_args.word_embed_path
-    )
+    tokenizer_path = hf_hub_download(repo_id=model_args.download_repo, filename=model_args.tokenizer_path)
+    checkpoint_path = hf_hub_download(repo_id=model_args.download_repo, filename=model_args.word_embed_path)
 
     model = get_model(model_args, tokenizer_path, checkpoint_path)
     tokenizer = model.word_embedding.tokenizer

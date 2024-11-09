@@ -15,12 +15,8 @@ class WordStats(object):
         checkpoint_path: str = "glove.840B.300d/glove.840B.300d.safetensors",
     ):
         self.tokenizer_path = hf_hub_download(repo_id=repo_id, filename=tokenizer_path)
-        self.checkpoint_path = hf_hub_download(
-            repo_id=repo_id, filename=checkpoint_path
-        )
-        self.glove = Glove(
-            ckpt_path=self.checkpoint_path, tokenizer_path=self.tokenizer_path
-        )
+        self.checkpoint_path = hf_hub_download(repo_id=repo_id, filename=checkpoint_path)
+        self.glove = Glove(ckpt_path=self.checkpoint_path, tokenizer_path=self.tokenizer_path)
 
     def word_count(self, data: str | Iterable[str]) -> Dict[str, int]:
         total = 0

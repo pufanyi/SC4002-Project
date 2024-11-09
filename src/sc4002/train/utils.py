@@ -15,22 +15,16 @@ class DataCollator:
     def pad_sequence(self, input_ids, batch_first, padding_value):
         if self.tokenizer.pad_side == "left":
             input_ids = [torch.flip(_input_ids, [0]) for _input_ids in input_ids]
-        input_ids = torch.nn.utils.rnn.pad_sequence(
-            input_ids, batch_first=batch_first, padding_value=padding_value
-        )
+        input_ids = torch.nn.utils.rnn.pad_sequence(input_ids, batch_first=batch_first, padding_value=padding_value)
         if self.tokenizer.pad_side == "left":
             input_ids = torch.flip(input_ids, [1])
         return input_ids
 
     def __call__(self, instances: Sequence[Dict]):
-        input_ids, labels = tuple(
-            [instance[key] for instance in instances] for key in ("input_ids", "label")
-        )
+        input_ids, labels = tuple([instance[key] for instance in instances] for key in ("input_ids", "label"))
         input_ids = [torch.tensor(input_id).squeeze(0) for input_id in input_ids]
         labels = torch.tensor(labels)
-        input_ids = self.pad_sequence(
-            input_ids, batch_first=True, padding_value=self.tokenizer.pad_id
-        )
+        input_ids = self.pad_sequence(input_ids, batch_first=True, padding_value=self.tokenizer.pad_id)
         masks = input_ids.ne(self.tokenizer.pad_id)
         return dict(input_ids=input_ids, labels=labels, masks=masks)
 
@@ -55,9 +49,7 @@ def preprocess_dataset(
     return train_dataset, eval_dataset, test_dataset
 
 
-def get_model(
-    model_args: ModelArguments, tokenizer_path: str = None, checkpoint_path: str = None
-):
+def get_model(model_args: ModelArguments, tokenizer_path: str = None, checkpoint_path: str = None):
     if model_args.model_type.lower() == "rnn":
         model = RNN(
             input_dim=model_args.input_size,
