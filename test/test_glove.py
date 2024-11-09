@@ -23,11 +23,6 @@ class TestGlove(unittest.TestCase):
         for idx, word in enumerate(words):
             assert word.strip().lower() == inputs[idx].strip().lower()
 
-        print()
-        print(
-            self.glove.tokenizer.demo("pneumonoultramicroscopicsilicovolcanoconiosis")
-        )
-        print()
 
     def testGlove(self):
         inputs = ["Have a nice day !", "Say hello to the world"]

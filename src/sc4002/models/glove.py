@@ -27,7 +27,7 @@ class Glove(BaseModel):
         self.add_embedding()
         # Add pad token embedding, does not contribute
         self.add_embedding(padding=True)
-        self.embedding.to(device)
+        self.embedding.to(self.device)
 
     @property
     def vocab_size(self):
@@ -41,6 +41,7 @@ class Glove(BaseModel):
             assert False, "input and input_ids can not both be None"
         if input_ids is None:
             input_ids = self.tokenizer.encode(inputs, return_tensor="pt")
+        input_ids = input_ids.to(self.device)
         embeddings = self.embedding(input_ids)
         return embeddings
 

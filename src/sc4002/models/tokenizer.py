@@ -18,6 +18,8 @@ class Tokenizer:
         self.pad_side = pad_side
         self.pad_token = "<pad>"
         self.pad_id = len(self.tokenizer_dict) + 1
+        self.ids_to_tokens[self.unk_id] = self.unk_token
+        self.ids_to_tokens[self.pad_id] = self.pad_token
 
     def known_word(self, word: str):
         return word.lower() in self.tokenizer_dict
@@ -75,6 +77,5 @@ class Tokenizer:
         input_id = input_ids[0]
         decode_list = []
         for idx in input_id:
-            if idx != self.pad_id and idx != self.unk_id:
-                decode_list.append(self.ids_to_tokens[idx])
+            decode_list.append(self.ids_to_tokens[idx])
         return " | ".join(decode_list)
