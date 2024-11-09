@@ -1,14 +1,15 @@
 import json
 
 import torch
-import wandb
 from datasets import load_dataset
 from huggingface_hub import hf_hub_download
 from transformers import HfArgumentParser, TrainingArguments
 
+import wandb
 from sc4002.eval import compute_acc
 from sc4002.models import RNN
-from sc4002.train.config import CustomTrainingArguments, DataArguments, ModelArguments
+from sc4002.train.config import (CustomTrainingArguments, DataArguments,
+                                 ModelArguments)
 from sc4002.train.trainer import CustomTrainer
 from sc4002.train.utils import DataCollator, get_model, preprocess_dataset
 

@@ -15,8 +15,8 @@ class RNN(BaseModel):
         hidden_dim: int = 512,
         output_dim: int = 2,
         model_name: str = "rnn",
-        ckpt_path: str = None,
-        tokenizer_path: str = None,
+        ckpt_path: str | None = None,
+        tokenizer_path: str | None = None,
         *args,
         **kwargs,
     ) -> None:

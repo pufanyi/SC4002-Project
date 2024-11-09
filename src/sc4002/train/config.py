@@ -10,8 +10,10 @@ class ModelArguments:
     input_size: int = field(default=300)
     hidden_size: int = field(default=512)
     download_repo: str = field(default="kcz358/glove")
-    tokenizer_path: str = field(default="glove.6B/glove.6B.300d.tokenizer.json")
-    word_embed_path: str = field(default="glove.6B/glove.6B.300d.safetensors")
+    tokenizer_path: str = field(
+        default="glove.840B.300d/glove.840B.300d.tokenizer.json"
+    )
+    word_embed_path: str = field(default="glove.840B.300d/glove.840B.300d.safetensors")
     freeze_word_embed: bool = field(default=False)
 
 

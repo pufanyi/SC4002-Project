@@ -16,7 +16,7 @@ python3 -m sc4002.train.train_sweep \
     --learning_rate 1e-5 \
     --num_train_epochs 10 \
     --freeze_word_embed \
-    --sweep_config ./scripts/train/sweep_config.json \
+    --sweep_config ./scripts/config/sweep_config.json \
     --sweep_count 5 \
     --run_name $RUN_NAME
     # --lr_scheduler_type "cosine" \

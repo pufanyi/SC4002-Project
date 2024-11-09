@@ -5,7 +5,8 @@ from transformers import HfArgumentParser, TrainingArguments
 
 from sc4002.eval import compute_acc
 from sc4002.models import RNN
-from sc4002.train.config import CustomTrainingArguments, DataArguments, ModelArguments
+from sc4002.train.config import (CustomTrainingArguments, DataArguments,
+                                 ModelArguments)
 from sc4002.train.trainer import CustomTrainer
 from sc4002.train.utils import DataCollator, get_model, preprocess_dataset
 

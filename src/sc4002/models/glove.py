@@ -18,6 +18,7 @@ class Glove(BaseModel):
         **kwargs,
     ) -> None:
         super().__init__(model_name, *args, **kwargs)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         state_dict = load_file(ckpt_path)
         self._vocab_size, self.dim = state_dict["weight"].shape
         self.embedding = torch.nn.Embedding.from_pretrained(state_dict["weight"])
@@ -26,21 +27,23 @@ class Glove(BaseModel):
         self.add_embedding()
         # Add pad token embedding, does not contribute
         self.add_embedding(padding=True)
+        self.embedding.to(self.device)
 
     @property
     def vocab_size(self):
         return self._vocab_size
+
+    def known_word(self, word: str):
+        return self.tokenizer.known_word(word)
 
     def forward(self, inputs: List[str] = None, input_ids=None, **kwargs):
         if inputs is None and input_ids is None:
             assert False, "input and input_ids can not both be None"
         if input_ids is None:
             input_ids = self.tokenizer.encode(inputs, return_tensor="pt")
+        input_ids = input_ids.to(self.device)
         embeddings = self.embedding(input_ids)
         return embeddings
-
-    def device(self):
-        return self.embedding.weight.device
 
     def add_embedding(self, padding=False):
         params = torch.zeros(1, self.dim)
