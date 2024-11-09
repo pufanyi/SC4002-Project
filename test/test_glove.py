@@ -9,10 +9,12 @@ class TestGlove(unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
         tokenizer_path = hf_hub_download(
-            repo_id="kcz358/glove", filename="glove.840B.300d/glove.840B.300d.tokenizer.json"
+            repo_id="kcz358/glove",
+            filename="glove.840B.300d/glove.840B.300d.tokenizer.json",
         )
         checkpoint_path = hf_hub_download(
-            repo_id="kcz358/glove", filename="glove.840B.300d/glove.840B.300d.safetensors"
+            repo_id="kcz358/glove",
+            filename="glove.840B.300d/glove.840B.300d.safetensors",
         )
         cls.glove = Glove(ckpt_path=checkpoint_path, tokenizer_path=tokenizer_path)
 
@@ -22,7 +24,6 @@ class TestGlove(unittest.TestCase):
         words = self.glove.tokenizer.decode(tokens)
         for idx, word in enumerate(words):
             assert word.strip().lower() == inputs[idx].strip().lower()
-
 
     def testGlove(self):
         inputs = ["Have a nice day !", "Say hello to the world"]

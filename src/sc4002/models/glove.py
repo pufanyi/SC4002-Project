@@ -32,7 +32,7 @@ class Glove(BaseModel):
     @property
     def vocab_size(self):
         return self._vocab_size
-    
+
     def known_word(self, word: str):
         return self.tokenizer.known_word(word)
 
