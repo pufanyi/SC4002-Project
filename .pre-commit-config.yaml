@@ -10,4 +10,4 @@ repos:
     hooks:
       - id: isort
         language_version: python3
-        args: ["--profile", "black"]
+        args: ["--profile", "black", "--line-length", "88"]
