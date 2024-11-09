@@ -54,7 +54,7 @@ class Tokenizer:
                 i += len(longest_match)
             else:
                 i += 1
-                tokens.append(len(self.tokenizer_dict))
+                tokens.append(self.unk_id)
 
         return tokens
 
