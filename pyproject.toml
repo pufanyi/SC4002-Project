@@ -38,6 +38,8 @@ dependencies = [
     "accelerate",
     "evaluate",
     "torchtyping",
+    "nltk==3.9.1",
+    "matplotlib==3.9.2",
 ]
 
 [project.optional-dependencies]
