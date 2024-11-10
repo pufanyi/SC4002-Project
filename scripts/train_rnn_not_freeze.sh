@@ -5,7 +5,7 @@
 
 RUN_NAME=train_rnn
 
-python3 -m sc4002.train.train_sweep \
+python3 -m sc4002.train.train \
     --output_dir ./checkpoints \
     --report_to wandb \
     --model_type rnn \
@@ -14,11 +14,8 @@ python3 -m sc4002.train.train_sweep \
     --logging_steps 10 \
     --label_names "labels" \
     --num_train_epochs 10 \
-    --freeze_word_embed \
-    --sweep_config ./scripts/config/sweep_config_rnn.json \
-    --sweep_count 20 \
     --run_name $RUN_NAME \
     --lr_scheduler_type "cosine" \
-    --wandb_project "sc4002_rnn_freeze" \
-    # --weight_decay 0. \
-    # --warmup_ratio 0.03
+    --wandb_project "sc4002_rnn_freeze_danchou" \
+    --warmup_ratio 0.03 \
+    --learning_rate 1.63e-5

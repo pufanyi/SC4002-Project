@@ -17,8 +17,9 @@ class RNN(BaseModel):
         model_name: str = "rnn",
         ckpt_path: str | None = None,
         tokenizer_path: str | None = None,
-        num_layers: int = 2,
+        num_layers: int = 5,
         randomize_unknown: bool = False,
+        aggregation_method: Literal["sum", "mean"] = "sum",
         *args,
         **kwargs,
     ) -> None:
@@ -26,6 +27,7 @@ class RNN(BaseModel):
         self.word_embedding = Glove(ckpt_path=ckpt_path, tokenizer_path=tokenizer_path, randomize_unknown=randomize_unknown)
         self.rnn = nn.RNN(input_size=input_dim, hidden_size=hidden_dim, num_layers=num_layers)
         self.linear_head = nn.Linear(hidden_dim, output_dim)
+        self.aggregation_method = aggregation_method
 
     def forward(
         self,
@@ -45,12 +47,18 @@ class RNN(BaseModel):
             output = []
             for em, mask in zip(embed, masks):
                 o, hid = self.rnn(em[mask].unsqueeze(0))
-                output.append(o.sum(dim=1))
+                if self.aggregation_method == "mean":
+                    output.append(o.mean(dim=1))
+                else:
+                    output.append(o.sum(dim=1))
             output = torch.concat(output)
         else:
             output, hidden_state = self.rnn(embed)
             # output (bs, seq, hidden_size)
-            output = output.sum(dim=1)
+            if self.aggregation_method == "mean":
+                output = output.mean(dim=1)
+            else:
+                output = output.sum(dim=1)
         logits = self.linear_head(output)
         logits = nn.functional.softmax(logits, dim=1)
         return logits

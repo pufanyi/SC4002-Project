@@ -18,7 +18,6 @@ python3 -m sc4002.train.train_sweep \
     --sweep_config ./scripts/config/sweep_config_rnn.json \
     --sweep_count 20 \
     --run_name $RUN_NAME \
-    --freeze_word_embed False \
     --lr_scheduler_type "cosine" \
     --wandb_project "sc4002_rnn_not_freeze" \
     # --weight_decay 0. \
