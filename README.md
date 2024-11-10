@@ -69,6 +69,12 @@ class CustomTrainingArguments(TrainingArguments):
 
 ```
 
+## Training Logs
+
+All the training logs are being logged in the [Weights & Biases](https://wandb.ai/). Here is an example of the training logs.
+
+![](./images/logs.png)
+
 ## Unit Test
 
 We add some of the basic unit testing in the run suite. If you want to run the testing on the test set or the val set, it is being logged at every train and their is no need to run extra scripts.
