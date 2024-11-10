@@ -1,6 +1,6 @@
 {
-    "method": "random",
-    "metric": {"goal": "minimize", "name": "eval/accuracy"},
+    "method": "bayes",
+    "metric": {"goal": "maximize", "name": "eval/accuracy"},
     "parameters": {
         "epochs": {
             "value": 1
@@ -17,7 +17,7 @@
             "values": [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
         },
         "num_layers": {
-            "values": [1, 2, 3, 4, 5]
+            "values": [4, 5, 6]
         }
     }
 }
