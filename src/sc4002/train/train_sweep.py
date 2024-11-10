@@ -1,4 +1,5 @@
 import json
+import random
 
 import wandb
 from datasets import load_dataset
@@ -19,10 +20,9 @@ def main():
     # We now keep distinct sets of args, for a cleaner separation of concerns.
     parser = HfArgumentParser((ModelArguments, DataArguments, CustomTrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
-    wandb.init(project=training_args.wandb_project)
     with open(training_args.sweep_config, "r") as f:
         sweep_config = json.load(f)
-    sweep_id = wandb.sweep(sweep_config)
+    sweep_id = wandb.sweep(sweep_config, project=training_args.wandb_project)
 
     def train_sweep(config=None):
         with wandb.init(config=config):
@@ -31,7 +31,7 @@ def main():
             checkpoint_path = hf_hub_download(repo_id=model_args.download_repo, filename=model_args.word_embed_path)
             num_layers = config.num_layers
 
-            model = get_model(model_args, tokenizer_path, checkpoint_path, num_layers=num_layers)
+            model = get_model(model_args, tokenizer_path, checkpoint_path, num_layers=num_layers, randomize_unknown=not model_args.freeze_word_embed)
             tokenizer = model.word_embedding.tokenizer
 
             if model_args.freeze_word_embed:
@@ -52,7 +52,7 @@ def main():
                 report_to="wandb",  # Turn on Weights & Biases logging
                 num_train_epochs=config.epochs,
                 learning_rate=config.learning_rate,
-                weight_decay=config.weight_decay,
+                # weight_decay=config.weight_decay,
                 per_device_train_batch_size=config.batch_size,
                 per_device_eval_batch_size=16,
                 save_strategy="epoch",
@@ -78,7 +78,7 @@ def main():
             trainer.train()
             trainer.predict(test_dataset)
 
-    wandb.agent(sweep_id, train_sweep, count=training_args.sweep_count)
+    wandb.agent(sweep_id, train_sweep, count=training_args.sweep_count, project=training_args.wandb_project)
 
 
 if __name__ == "__main__":

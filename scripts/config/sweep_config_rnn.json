@@ -1,0 +1,20 @@
+{
+    "method": "bayes",
+    "metric": {"goal": "maximize", "name": "eval/accuracy"},
+    "parameters": {
+        "epochs": {
+            "value": 1
+        },
+        "batch_size": {
+            "values": [8, 16, 32]
+        },
+        "learning_rate": {
+            "distribution": "log_uniform_values",
+            "min": 1e-5,
+            "max": 1e-3
+        },
+        "num_layers": {
+            "values": [3, 4, 5, 6]
+        }
+    }
+}

@@ -14,6 +14,7 @@ class Glove(BaseModel):
         model_name: str = "glove",
         ckpt_path: str = None,
         tokenizer_path: str = None,
+        randomize_unknown: bool = False,
         *args,
         **kwargs,
     ) -> None:
@@ -24,7 +25,10 @@ class Glove(BaseModel):
         self.embedding = torch.nn.Embedding.from_pretrained(state_dict["weight"])
         self.tokenizer = Tokenizer(tokenizer_path)
         # Add UNK token embedding
-        self.add_embedding()
+        if randomize_unknown:
+            self.add_embedding(init_method="xavier")
+        else:
+            self.add_embedding()
         # Add pad token embedding, does not contribute
         self.add_embedding(padding=True)
 

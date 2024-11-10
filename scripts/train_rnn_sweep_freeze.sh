@@ -15,10 +15,11 @@ python3 -m sc4002.train.train_sweep \
     --label_names "labels" \
     --num_train_epochs 10 \
     --freeze_word_embed \
-    --sweep_config ./scripts/config/sweep_config.json \
+    --sweep_config ./scripts/config/sweep_config_rnn.json \
     --sweep_count 20 \
     --run_name $RUN_NAME \
-    --freeze_word_embed True
-    # --lr_scheduler_type "cosine"
+    --freeze_word_embed True \
+    --lr_scheduler_type "cosine" \
+    --wandb_project "sc4002_rnn_freeze" \
     # --weight_decay 0. \
     # --warmup_ratio 0.03

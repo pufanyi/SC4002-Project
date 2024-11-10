@@ -20,6 +20,7 @@ class BidirectionalLSTM(BaseModel):
         model_name: str = "enhanced_bilstm",
         ckpt_path: str | None = None,
         tokenizer_path: str | None = None,
+        randomize_unknown: bool = False,
         *args,
         **kwargs,
     ) -> None:
@@ -41,7 +42,7 @@ class BidirectionalLSTM(BaseModel):
         """
         super().__init__(model_name, *args, **kwargs)
 
-        self.word_embedding = Glove(ckpt_path=ckpt_path, tokenizer_path=tokenizer_path)
+        self.word_embedding = Glove(ckpt_path=ckpt_path, tokenizer_path=tokenizer_path, randomize_unknown=randomize_unknown)
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
         self.use_residual = use_residual
