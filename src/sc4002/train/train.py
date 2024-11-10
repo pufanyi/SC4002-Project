@@ -28,10 +28,6 @@ def main():
     if model_args.freeze_word_embed:
         for p in model.word_embedding.parameters():
             p.requires_grad = False
-    else:
-        model.add_train_vocab(dataset["train"]["text"])
-        for p in model.word_embedding.parameters():
-            p.requires_grad = True
 
     train_dataset, eval_dataset, test_dataset = preprocess_dataset(
         dataset,
