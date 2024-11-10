@@ -25,7 +25,17 @@ After that, you can run the training script.
 sh scripts/train.sh
 ```
 
-## Test
+To run the parameter search, you can run the search script by
+
+```bash
+bash scripts/train_rnn_sweep_not_freeze.sh
+```
+
+You can find how to run other model using different scripts in the folder
+
+## Unit Test
+
+We add some of the basic unit testing in the run suite. If you want to run the testing on the test set or the val set, it is being logged at every train and their is no need to run extra scripts.
 
 ```bash
 python test/run_suite.py
