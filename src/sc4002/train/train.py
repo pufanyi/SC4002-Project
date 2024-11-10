@@ -19,8 +19,9 @@ def main():
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
     tokenizer_path = hf_hub_download(repo_id=model_args.download_repo, filename=model_args.tokenizer_path)
     checkpoint_path = hf_hub_download(repo_id=model_args.download_repo, filename=model_args.word_embed_path)
+    agg_method = model_args.agg_method
 
-    model = get_model(model_args, tokenizer_path, checkpoint_path)
+    model = get_model(model_args, tokenizer_path, checkpoint_path, randomize_unknown=not model_args.freeze_word_embed)
     tokenizer = model.word_embedding.tokenizer
 
     dataset = load_dataset(data_args.dataset_name)

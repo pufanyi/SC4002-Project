@@ -13,6 +13,7 @@ class ModelArguments:
     tokenizer_path: str = field(default="glove.840B.300d/glove.840B.300d.tokenizer.json")
     word_embed_path: str = field(default="glove.840B.300d/glove.840B.300d.safetensors")
     freeze_word_embed: bool = field(default=False)
+    agg_method: Optional[str] = field(default="sum")
 
 
 @dataclass
