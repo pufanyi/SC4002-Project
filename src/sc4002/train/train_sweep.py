@@ -1,6 +1,7 @@
 import json
 import random
 
+from torch import dropout
 import wandb
 from datasets import load_dataset
 from huggingface_hub import hf_hub_download
@@ -31,7 +32,7 @@ def main():
             checkpoint_path = hf_hub_download(repo_id=model_args.download_repo, filename=model_args.word_embed_path)
             num_layers = config.num_layers
 
-            model = get_model(model_args, tokenizer_path, checkpoint_path, num_layers=num_layers, randomize_unknown=not model_args.freeze_word_embed)
+            model = get_model(model_args, tokenizer_path, checkpoint_path, num_layers=num_layers, randomize_unknown=not model_args.freeze_word_embed, dropout=config.dropout if hasattr(config, "dropout") else 0.0)
             tokenizer = model.word_embedding.tokenizer
 
             if model_args.freeze_word_embed:
