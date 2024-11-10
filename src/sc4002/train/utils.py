@@ -4,7 +4,7 @@ from typing import Dict, Sequence
 import torch
 from datasets import Dataset
 
-from sc4002.models import RNN, Tokenizer
+from sc4002.models import RNN, Tokenizer, BidirectionalLSTM
 from sc4002.train.config import ModelArguments
 
 
@@ -54,6 +54,15 @@ def get_model(model_args: ModelArguments, tokenizer_path: str = None, checkpoint
         model = RNN(
             input_dim=model_args.input_size,
             hidden_dim=model_args.hidden_size,
+            tokenizer_path=tokenizer_path,
+            ckpt_path=checkpoint_path,
+        )
+    elif model_args.model_type.lower() == "bilstm":
+        model = BidirectionalLSTM(
+            input_dim=model_args.input_size,
+            hidden_dim=model_args.hidden_size,
+            num_layers=model_args.num_layers if hasattr(model_args, 'num_layers') else 1,
+            dropout=model_args.dropout if hasattr(model_args, 'dropout') else 0.2,
             tokenizer_path=tokenizer_path,
             ckpt_path=checkpoint_path,
         )
