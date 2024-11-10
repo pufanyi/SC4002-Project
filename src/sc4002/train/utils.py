@@ -49,12 +49,13 @@ def preprocess_dataset(
     return train_dataset, eval_dataset, test_dataset
 
 
-def get_model(model_args: ModelArguments, tokenizer_path: str = None, checkpoint_path: str = None):
+def get_model(model_args: ModelArguments, tokenizer_path: str = None, checkpoint_path: str = None, **kwargs):
     if model_args.model_type.lower() == "rnn":
         model = RNN(
             input_dim=model_args.input_size,
             hidden_dim=model_args.hidden_size,
             tokenizer_path=tokenizer_path,
             ckpt_path=checkpoint_path,
+            **kwargs,
         )
     return model

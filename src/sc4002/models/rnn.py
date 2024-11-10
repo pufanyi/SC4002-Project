@@ -17,12 +17,13 @@ class RNN(BaseModel):
         model_name: str = "rnn",
         ckpt_path: str | None = None,
         tokenizer_path: str | None = None,
+        num_layers: int = 2,
         *args,
         **kwargs,
     ) -> None:
         super().__init__(model_name, *args, **kwargs)
         self.word_embedding = Glove(ckpt_path=ckpt_path, tokenizer_path=tokenizer_path)
-        self.rnn = nn.RNN(input_size=input_dim, hidden_size=hidden_dim)
+        self.rnn = nn.RNN(input_size=input_dim, hidden_size=hidden_dim, num_layers=num_layers)
         self.linear_head = nn.Linear(hidden_dim, output_dim)
 
     def forward(
