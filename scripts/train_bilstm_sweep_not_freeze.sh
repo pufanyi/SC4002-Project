@@ -3,7 +3,7 @@
 # export WANDB_ENTITY=<YOUR_USER_NAME>
 # export WANDB_MODE=online
 
-RUN_NAME=train_rnn
+RUN_NAME=train_bilstm
 
 python3 -m sc4002.train.train_sweep \
     --output_dir ./checkpoints \
