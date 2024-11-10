@@ -1,5 +1,5 @@
-import json
-from typing import Any, List, Union
+import nltk
+from typing import Any, Iterable, List, Union
 
 import torch
 from safetensors.torch import load_file
@@ -61,3 +61,10 @@ class Glove(BaseModel):
     def add_new_word(self, word: str):
         self.add_embedding(init_method="xavier")
         self.tokenizer.add_new_word(word)
+
+    def add_train_vocab(self, corpus: Iterable[str]):
+        for s in corpus:
+            words = nltk.word_tokenize(s)
+            for word in words:
+                if not self.known_word(word):
+                    self.add_new_word(word)

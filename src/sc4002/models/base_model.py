@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Iterable
 
 import torch
 
@@ -12,5 +13,8 @@ class BaseModel(torch.nn.Module):
     def forward(**kwargs):
         raise NotImplementedError
 
-
-# Add any function or attribute that are common to all models here
+    def add_train_vocab(self, corpus: Iterable[str]):
+        if hasattr(self, "word_embedding"):
+            self.word_embedding.add_train_vocab(corpus)
+        else:
+            raise NotImplementedError("Model does not support training vocabulary")

@@ -23,11 +23,16 @@ def main():
     model = get_model(model_args, tokenizer_path, checkpoint_path)
     tokenizer = model.word_embedding.tokenizer
 
+    dataset = load_dataset(data_args.dataset_name)
+
     if model_args.freeze_word_embed:
         for p in model.word_embedding.parameters():
             p.requires_grad = False
+    else:
+        model.add_train_vocab(dataset["train"]["text"])
+        for p in model.word_embedding.parameters():
+            p.requires_grad = True
 
-    dataset = load_dataset(data_args.dataset_name)
     train_dataset, eval_dataset, test_dataset = preprocess_dataset(
         dataset,
         tokenizer,
