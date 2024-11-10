@@ -25,5 +25,6 @@ class DataArguments:
 
 @dataclass
 class CustomTrainingArguments(TrainingArguments):
+    wandb_project: Optional[str] = field(default="sc4002")
     sweep_config: Optional[str] = field(default=None)
     sweep_count: Optional[int] = field(default=20)

@@ -1,6 +1,6 @@
 import json
 
-import torch
+import wandb
 from datasets import load_dataset
 from huggingface_hub import hf_hub_download
 from transformers import HfArgumentParser, TrainingArguments
@@ -19,6 +19,7 @@ def main():
     # We now keep distinct sets of args, for a cleaner separation of concerns.
     parser = HfArgumentParser((ModelArguments, DataArguments, CustomTrainingArguments))
     model_args, data_args, training_args = parser.parse_args_into_dataclasses()
+    wandb.init(project=training_args.wandb_project)
     with open(training_args.sweep_config, "r") as f:
         sweep_config = json.load(f)
     sweep_id = wandb.sweep(sweep_config)
