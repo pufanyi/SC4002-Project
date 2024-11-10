@@ -28,9 +28,8 @@ class RNN(BaseModel):
         self.rnn = nn.RNN(input_size=input_dim, hidden_size=hidden_dim, num_layers=num_layers)
         self.linear_head = nn.Linear(hidden_dim, output_dim)
         self.agg_method = agg_method
-        self.dropout = nn.Dropout(p=0.5)  
+        self.dropout = nn.Dropout(p=0.5)
         self.batch_norm = nn.BatchNorm1d(hidden_dim)  # Define in __init__
-
 
     def forward(
         self,
