@@ -18,7 +18,7 @@ python3 -m sc4002.train.train_sweep \
     --sweep_config ./scripts/config/sweep_config.json \
     --sweep_count 20 \
     --run_name $RUN_NAME \
-    --freeze_word_embed False
+    --freeze_word_embed True
     # --lr_scheduler_type "cosine"
     # --weight_decay 0. \
     # --warmup_ratio 0.03

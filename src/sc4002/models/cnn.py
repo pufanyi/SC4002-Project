@@ -6,6 +6,8 @@ from torchtyping import TensorType
 
 from .base_model import BaseModel
 from .glove import Glove
+
+
 class CNN(BaseModel):
     def __init__(
         self,
@@ -24,15 +26,7 @@ class CNN(BaseModel):
         self.word_embedding = Glove(ckpt_path=ckpt_path, tokenizer_path=tokenizer_path)
 
         # Define CNN layers
-        self.conv_layers = nn.ModuleList([
-            nn.Conv1d(
-                in_channels=input_dim if i == 0 else hidden_dim,
-                out_channels=hidden_dim,
-                kernel_size=kernel_size,
-                padding=kernel_size // 2  # To maintain sequence length
-            )
-            for i in range(num_layers)
-        ])
+        self.conv_layers = nn.ModuleList([nn.Conv1d(in_channels=input_dim if i == 0 else hidden_dim, out_channels=hidden_dim, kernel_size=kernel_size, padding=kernel_size // 2) for i in range(num_layers)])  # To maintain sequence length
         self.pool = nn.AdaptiveAvgPool1d(1)  # Global average pooling
         self.linear_head = nn.Linear(hidden_dim, output_dim)
 

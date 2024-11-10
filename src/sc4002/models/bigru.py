@@ -9,19 +9,19 @@ from .glove import Glove
 
 class BidirectionalGRU(BaseModel):
     def __init__(
-            self,
-            input_dim: int = 300,
-            hidden_dim: int = 512,
-            output_dim: int = 2,
-            num_layers: int = 2,
-            dropout: float = 0.2,
-            use_residual: bool = True,
-            bidirectional_merge: str = "concat",
-            model_name: str = "enhanced_bigru",
-            ckpt_path: str | None = None,
-            tokenizer_path: str | None = None,
-            *args,
-            **kwargs,
+        self,
+        input_dim: int = 300,
+        hidden_dim: int = 512,
+        output_dim: int = 2,
+        num_layers: int = 2,
+        dropout: float = 0.2,
+        use_residual: bool = True,
+        bidirectional_merge: str = "concat",
+        model_name: str = "enhanced_bigru",
+        ckpt_path: str | None = None,
+        tokenizer_path: str | None = None,
+        *args,
+        **kwargs,
     ) -> None:
         """
         Initialize the Enhanced Bidirectional GRU model with residual connections
@@ -51,48 +51,25 @@ class BidirectionalGRU(BaseModel):
         self.layer_norm_input = nn.LayerNorm(input_dim)
 
         # Stack of bidirectional GRU layers
-        self.gru_layers = nn.ModuleList([
-            nn.GRU(
-                input_size=input_dim if i == 0 else hidden_dim * 2,
-                hidden_size=hidden_dim,
-                num_layers=1,
-                batch_first=True,
-                bidirectional=True,
-                dropout=0  # We'll handle dropout manually
-            )
-            for i in range(num_layers)
-        ])
+        self.gru_layers = nn.ModuleList(
+            [nn.GRU(input_size=input_dim if i == 0 else hidden_dim * 2, hidden_size=hidden_dim, num_layers=1, batch_first=True, bidirectional=True, dropout=0) for i in range(num_layers)]  # We'll handle dropout manually
+        )
 
         # Layer normalization after each GRU layer
-        self.layer_norms = nn.ModuleList([
-            nn.LayerNorm(hidden_dim * 2)
-            for _ in range(num_layers)
-        ])
+        self.layer_norms = nn.ModuleList([nn.LayerNorm(hidden_dim * 2) for _ in range(num_layers)])
 
         # Dropout layers
-        self.dropouts = nn.ModuleList([
-            nn.Dropout(dropout)
-            for _ in range(num_layers)
-        ])
+        self.dropouts = nn.ModuleList([nn.Dropout(dropout) for _ in range(num_layers)])
 
         # Output dimension adjustment based on merging strategy
         output_size = hidden_dim * 2 if bidirectional_merge in ["concat", "attention"] else hidden_dim
 
         # Attention layer for merging bidirectional states
         if bidirectional_merge == "attention":
-            self.attention = nn.Sequential(
-                nn.Linear(hidden_dim * 2, hidden_dim),
-                nn.Tanh(),
-                nn.Linear(hidden_dim, 1)
-            )
+            self.attention = nn.Sequential(nn.Linear(hidden_dim * 2, hidden_dim), nn.Tanh(), nn.Linear(hidden_dim, 1))
 
         # Final classification layers
-        self.classifier = nn.Sequential(
-            nn.Linear(output_size, hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(dropout),
-            nn.Linear(hidden_dim, output_dim)
-        )
+        self.classifier = nn.Sequential(nn.Linear(output_size, hidden_dim), nn.ReLU(), nn.Dropout(dropout), nn.Linear(hidden_dim, output_dim))
 
     def _merge_bidirectional(self, forward_state, backward_state):
         """
@@ -130,8 +107,8 @@ class BidirectionalGRU(BaseModel):
             gru_out, hidden = gru(current_input)
 
             # Split bidirectional outputs
-            forward_out = gru_out[:, :, :self.hidden_dim]
-            backward_out = gru_out[:, :, self.hidden_dim:]
+            forward_out = gru_out[:, :, : self.hidden_dim]
+            backward_out = gru_out[:, :, self.hidden_dim :]
 
             # Merge bidirectional states
             merged = self._merge_bidirectional(forward_out, backward_out)
@@ -161,10 +138,7 @@ class BidirectionalGRU(BaseModel):
             # Use mask to get valid sequence lengths
             lengths = masks.sum(dim=1)
             # Get last valid output for each sequence
-            final_states = torch.stack([
-                final_output[i, length - 1]
-                for i, length in enumerate(lengths)
-            ])
+            final_states = torch.stack([final_output[i, length - 1] for i, length in enumerate(lengths)])
         else:
             # Use last state if no masks provided
             final_states = final_output[:, -1]
@@ -172,11 +146,11 @@ class BidirectionalGRU(BaseModel):
         return final_states
 
     def forward(
-            self,
-            inputs: List[str] = None,
-            input_ids: TensorType["bs", "seq_len"] = None,
-            masks: TensorType["bs", "seq_len"] = None,
-            **kwargs,
+        self,
+        inputs: List[str] = None,
+        input_ids: TensorType["bs", "seq_len"] = None,
+        masks: TensorType["bs", "seq_len"] = None,
+        **kwargs,
     ):
         """
         Forward pass of the enhanced BiGRU model.

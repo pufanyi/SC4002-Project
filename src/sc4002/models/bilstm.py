@@ -6,6 +6,7 @@ from torchtyping import TensorType
 from .base_model import BaseModel
 from .glove import Glove
 
+
 class BidirectionalLSTM(BaseModel):
     def __init__(
         self,
@@ -25,7 +26,7 @@ class BidirectionalLSTM(BaseModel):
         """
         Initialize the Enhanced Bidirectional LSTM model with residual connections
         and improved bidirectional merging strategies.
-        
+
         Args:
             input_dim: Input feature dimension
             hidden_dim: Hidden state dimension
@@ -39,59 +40,36 @@ class BidirectionalLSTM(BaseModel):
             tokenizer_path: Tokenizer path
         """
         super().__init__(model_name, *args, **kwargs)
-        
+
         self.word_embedding = Glove(ckpt_path=ckpt_path, tokenizer_path=tokenizer_path)
         self.hidden_dim = hidden_dim
         self.num_layers = num_layers
         self.use_residual = use_residual
         self.bidirectional_merge = bidirectional_merge
-        
+
         # Layer normalization for input
         self.layer_norm_input = nn.LayerNorm(input_dim)
-        
+
         # Stack of bidirectional LSTM layers
-        self.lstm_layers = nn.ModuleList([
-            nn.LSTM(
-                input_size=input_dim if i == 0 else hidden_dim * 2,
-                hidden_size=hidden_dim,
-                num_layers=1,
-                batch_first=True,
-                bidirectional=True,
-                dropout=0  # We'll handle dropout manually
-            )
-            for i in range(num_layers)
-        ])
-        
+        self.lstm_layers = nn.ModuleList(
+            [nn.LSTM(input_size=input_dim if i == 0 else hidden_dim * 2, hidden_size=hidden_dim, num_layers=1, batch_first=True, bidirectional=True, dropout=0) for i in range(num_layers)]  # We'll handle dropout manually
+        )
+
         # Layer normalization after each LSTM layer
-        self.layer_norms = nn.ModuleList([
-            nn.LayerNorm(hidden_dim * 2)
-            for _ in range(num_layers)
-        ])
-        
+        self.layer_norms = nn.ModuleList([nn.LayerNorm(hidden_dim * 2) for _ in range(num_layers)])
+
         # Dropout layers
-        self.dropouts = nn.ModuleList([
-            nn.Dropout(dropout)
-            for _ in range(num_layers)
-        ])
-        
+        self.dropouts = nn.ModuleList([nn.Dropout(dropout) for _ in range(num_layers)])
+
         # Output dimension adjustment based on merging strategy
         output_size = hidden_dim * 2 if bidirectional_merge in ["concat", "attention"] else hidden_dim
-        
+
         # Attention layer for merging bidirectional states
         if bidirectional_merge == "attention":
-            self.attention = nn.Sequential(
-                nn.Linear(hidden_dim * 2, hidden_dim),
-                nn.Tanh(),
-                nn.Linear(hidden_dim, 1)
-            )
-        
+            self.attention = nn.Sequential(nn.Linear(hidden_dim * 2, hidden_dim), nn.Tanh(), nn.Linear(hidden_dim, 1))
+
         # Final classification layers
-        self.classifier = nn.Sequential(
-            nn.Linear(output_size, hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(dropout),
-            nn.Linear(hidden_dim, output_dim)
-        )
+        self.classifier = nn.Sequential(nn.Linear(output_size, hidden_dim), nn.ReLU(), nn.Dropout(dropout), nn.Linear(hidden_dim, output_dim))
 
     def _merge_bidirectional(self, forward_state, backward_state):
         """
@@ -115,59 +93,56 @@ class BidirectionalLSTM(BaseModel):
         Process a sequence through all LSTM layers with residual connections.
         """
         batch_size = x.size(0)
-        
+
         # Initial layer normalization
         x = self.layer_norm_input(x)
-        
+
         # Store all layer outputs for residual connections
         layer_outputs = []
-        
+
         # Process through each LSTM layer
         current_input = x
         for i, (lstm, layer_norm, dropout) in enumerate(zip(self.lstm_layers, self.layer_norms, self.dropouts)):
             # LSTM forward pass
             lstm_out, (hidden, cell) = lstm(current_input)
-            
+
             # Split bidirectional outputs
-            forward_out = lstm_out[:, :, :self.hidden_dim]
-            backward_out = lstm_out[:, :, self.hidden_dim:]
-            
+            forward_out = lstm_out[:, :, : self.hidden_dim]
+            backward_out = lstm_out[:, :, self.hidden_dim :]
+
             # Merge bidirectional states
             merged = self._merge_bidirectional(forward_out, backward_out)
-            
+
             # Apply layer normalization and dropout
             merged = layer_norm(merged)
             merged = dropout(merged)
-            
+
             # Add residual connection if enabled and dimensions match
             if self.use_residual and i > 0 and merged.size(-1) == current_input.size(-1):
                 merged = merged + current_input
-            
+
             # Store layer output
             layer_outputs.append(merged)
-            
+
             # Update input for next layer
             current_input = merged
-        
+
         # Combine all layer outputs
         if self.use_residual:
             final_output = sum(layer_outputs) / len(layer_outputs)
         else:
             final_output = layer_outputs[-1]
-        
+
         # Get sequence representation
         if masks is not None:
             # Use mask to get valid sequence lengths
             lengths = masks.sum(dim=1)
             # Get last valid output for each sequence
-            final_states = torch.stack([
-                final_output[i, length-1] 
-                for i, length in enumerate(lengths)
-            ])
+            final_states = torch.stack([final_output[i, length - 1] for i, length in enumerate(lengths)])
         else:
             # Use last state if no masks provided
             final_states = final_output[:, -1]
-            
+
         return final_states
 
     def forward(
@@ -182,7 +157,7 @@ class BidirectionalLSTM(BaseModel):
         """
         if inputs is None and input_ids is None:
             raise ValueError("inputs and input_ids cannot both be None")
-        
+
         # Get embeddings
         if input_ids is None:
             embed = self.word_embedding.forward(inputs)
@@ -191,11 +166,11 @@ class BidirectionalLSTM(BaseModel):
 
         # Process sequence through LSTM layers
         final_states = self._process_sequence(embed, masks)
-        
+
         # Classification
         logits = self.classifier(final_states)
-        
+
         # Apply softmax
         logits = nn.functional.softmax(logits, dim=-1)
-        
+
         return logits
