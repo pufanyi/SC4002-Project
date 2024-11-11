@@ -1,0 +1,23 @@
+\section{Code for Greedy Matching}\label{appendix:greedy_matching}
+
+\begin{lstlisting}
+def greedy_match(self, s: str):
+    tokens = []
+    i = 0
+    while i < len(s):
+        longest_match = None
+        for j in range(i + 1, len(s) + 1):
+            substring = s[i:j]
+            if substring.strip() in self.tokenizer_dict:
+                if longest_match is None or len(substring) > len(longest_match):
+                    longest_match = substring
+
+        if longest_match:
+            tokens.append(self.tokenizer_dict[longest_match.strip()])
+            i += len(longest_match)
+        else:
+            i += 1
+            tokens.append(len(self.tokenizer_dict))
+
+    return tokens
+\end{lstlisting}

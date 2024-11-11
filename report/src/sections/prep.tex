@@ -1,0 +1,125 @@
+\section{Preparing Word Embeddings}
+
+\subsection{Tokenizer and Embeddings}
+
+GloVe \cite{pennington2014glove} is used as our embedding method. We selected \texttt{glove.840B.300d}\footnote{Trained on Common Crawl, 840B tokens, 2.2M vocab, cased and 300d vectors, accessed from \url{https://nlp.stanford.edu/data/glove.840B.300d.zip}} as our pretrained embedding model. To easier manage the GloVe model, we pack the model to Hugging Face \cite{wolf2020transformers}.
+
+We tried to take an overview of this dataset. \textsc{Nltk} tokenizer \cite{bird2006nltk} is used to split the word. We report the \textbf{out-of-vocabulary (OOV)} issue in~\cref{tab:word_stats} and found about $0.96\%$ tokens are unknown in the vocabulary.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{c | c | c}
+    \toprule
+    \textbf{Words} & \textbf{Count} & \textbf{Percentage}\\
+    \midrule
+    Known & $182211$ & $99.04\%$\\
+    Unknown & $1757$ & $0.96\%$\\
+    \midrule
+    Total & $183968$ & $100\%$\\
+    \bottomrule
+    \end{tabular}
+    \vspace{1mm}
+    \caption{Word count for the training dataset \cite{Pang+Lee:05a}}
+    \label{tab:word_stats}
+    \vspace{-2mm}
+\end{table}
+
+
+% \begin{lstlisting}
+% >>> glove.tokenizer.demo("pneumonoultramicroscopicsilicovolcanoconiosis")
+% \end{lstlisting}
+
+% The output is:
+
+% \begin{lstlisting}
+% pne | umo | nou | ltr | amic | rosco | pics | ilic | ovo | lca | noc | oni | osis
+% \end{lstlisting}
+
+\subsection{Mitigating Out of Vocabulary Limitations}
+To address the OOV issue, we employ two approaches for handling various edge cases. \textbf{1)} We predefine the \texttt{<|UNK|>} token and its ID in the tokenizer class to map any unknown character to this token. The word embedding for \texttt{<|UNK|>} is resized and initialized to zeros. \textbf{2)} To maximize the pretrained knowledge from Glove, we use a \textbf{Greedy Matching} approach, which tokenizes each sentence by breaking down unknown words into recognizable segments. This allows us to reconstruct unknown words using known prefixes, suffixes, and semantic tokens, effectively leveraging the extensive vocabulary and latent space of the word embeddings.
+
+% \begin{lstlisting}
+% class Tokenizer(object):
+%     def __init__(self, tokenizer_path: str, pad_side: str = "right"):
+%         self.unk_token: str = "<|UNK|>"
+%         self.unk_id: int = len(self.tokenizer_dict)
+% \end{lstlisting}
+
+Then we use the greedy matching algorithm to find the longest matching known word. If an unknown word is encountered, replace it with the \texttt{<|UNK|>} token ID.
+
+There are 2 methods implementing this greedy idea, \textit{Hash-based Greedy Matching} and \textit{Trie-based Greedy Matching}, we analysed both and selected the best one.
+
+\paragraph{Hash-based Greedy Matching} All known words are organised in a hash table $\mathcal{H}$. We enumerate all possible substrings and choose the longest one in $\mathcal{H}$. The detailed algorithm is shown in Algorithm \ref{alg:HashBasedGreedyMatching}. We can proof that the time complexity of this algorithm is at most $\mathcal{O}\left(\|s\|^2\right)$. If we define the average word length is $\mathcal{W}$, the average time complexity is
+
+\begin{equation}
+\begin{aligned}
+T(s, \mathcal{W}) &= \mathbb{E}\left[\sum_{i=1}^{\|s\|}\mathbbm{1}_{s_i\text{ is beginning of a word}}\cdot (\|s\| - i)\right]\\
+&=\sum_{i=1}^{\|s\|}(\|s\| - i)\cdot\mathbb{P}(s_i\text{ is beginning of a word})\\
+&=\mathcal{O}\left(\frac{\|s\|^2}{\mathcal{W}}\right)
+\end{aligned}
+\end{equation}
+
+\paragraph{Trie-based Greedy Matching} Algorithm \ref{alg:TrieBasedGreedyMatching} illustrates implementing the greedy matching algorithm with Trie \cite{de1959file}. In this algorithm, every character in $s$ will only be visited at once, so the time complexity is $\mathcal{O}(\|s\|)$.
+
+Although Trie-based Greedy Matching shows a better time complexity, we found that in \cite{Pang+Lee:05a}, $\|s\|$ is always small as there is no long contexts, while building a Trie costs extra spaces and time. So we finally decided to adopt Hash-based Greedy Matching for our algorithm. The code snip is listed in Appendix \ref{appendix:greedy_matching}.
+
+\begin{algorithm}
+	\caption{\textsc{TrieBasedGreedyMatching}}
+    \label{alg:HashBasedGreedyMatching}
+	\begin{algorithmic}
+        \State $\mathcal{H} \leftarrow \textsc{BuildHash}(\text{known words})$
+        \State $s\leftarrow$ input sentense
+        \State $L \leftarrow 0$
+        \State $\mathcal{M} \leftarrow$ empty list
+        \While {$L < \textsc{Length}(s)$}
+            \State $R \leftarrow \emptyset$
+            \For{$r \in [L, \textsc{Length}(s))$}
+                \State $t\leftarrow \textsc{Strip}(s_{L:r})$
+                \If{$t \in \mathcal{H}$}
+                    \State $R\leftarrow r$
+                \EndIf
+            \EndFor
+            \State $L\leftarrow R + 1$
+            \If {$R = \emptyset$}
+            \State $\textsc{Append}(\mathcal{M}, \texttt{<|UNK|>})$
+            \Else
+            \State $\textsc{Append}(\mathcal{M}, s_{L:R})$
+            \EndIf
+        \EndWhile
+        \State \Return $\mathcal{M}$
+	\end{algorithmic} 
+\end{algorithm}
+
+\begin{algorithm}
+	\caption{\textsc{TrieBasedGreedyMatching}}
+    \label{alg:TrieBasedGreedyMatching}
+	\begin{algorithmic}
+        \State $\mathcal{T} \leftarrow \textsc{BuildTrie}(\text{known words})$
+        \State $s\leftarrow$ input sentense
+        \State $L \leftarrow 0$
+        \State $\mathcal{M} \leftarrow$ empty list
+        \While {$L < \textsc{Length}(s)$}
+            \While {$L < \textsc{Length}(s) \land \lnot \textsc{Visible}(s_L)$ }
+            \State $L\leftarrow L + 1$
+            \EndWhile
+            \State $R \leftarrow \emptyset$
+            \State $n \leftarrow \textsc{Root}(\mathcal{T})$
+            \For{$r\in [L, \textsc{Length}(s)) \land \textsc{Son}(n, s_r)\neq \emptyset$}
+                \State $n\leftarrow \textsc{Son}(n, s_r)$
+                \If {$s_{L:r}$ is a known word}
+                    \State $R\leftarrow r$
+                \EndIf
+            \EndFor
+            \State $L\leftarrow R$
+            \State $\textsc{Append}(\mathcal{M}, s_{L:R-1})$
+            \If {$R = \emptyset$}
+            \State $\textsc{Append}(\mathcal{M}, \texttt{<|UNK|>})$
+            \Else
+            \State $\textsc{Append}(\mathcal{M}, s_{L:R})$
+            \EndIf
+        \EndWhile
+        \State \Return $\mathcal{M}$
+	\end{algorithmic} 
+\end{algorithm}
+
+
