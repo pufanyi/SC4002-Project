@@ -1,6 +1,6 @@
 # SC4002 Group Project
 
-[Main Page](https://pufanyi.github.io/SC4002-Project/) / [Report](https://pufanyi.github.io/SC4002-Project/SC4002_Project.pdf) / [Code](https://github.com/pufanyi/SC4002-Project)
+[Main Page](https://pufanyi.github.io/SC4002-Project/) / [Report](https://pufanyi.github.io/SC4002-Project/report/SC4002_Project.pdf) / [Code](https://github.com/pufanyi/SC4002-Project)
 
 ## Installation
 
