@@ -1,4 +1,4 @@
-# SC4002 Project
+[Main Page](https://pufanyi.github.io/SC4002-Project/) | [Report](https://pufanyi.github.io/SC4002-Project/SC4002_Project.pdf)
 
 ## Installation
 
