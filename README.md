@@ -1,4 +1,4 @@
-[Main Page](https://pufanyi.github.io/SC4002-Project/) | [Report](https://pufanyi.github.io/SC4002-Project/SC4002_Project.pdf)
+[Main Page](https://pufanyi.github.io/SC4002-Project/) / [Report](https://pufanyi.github.io/SC4002-Project/SC4002_Project.pdf) / [Code](https://github.com/pufanyi/SC4002-Project)
 
 ## Installation
 
