@@ -38,7 +38,7 @@ dependencies = [
     "accelerate",
     "evaluate",
     "torchtyping",
-    "nltk==3.9.1",
+    "nltk==3.10.0",
     "matplotlib==3.9.2",
     "orjson==3.10.11",
 ]
