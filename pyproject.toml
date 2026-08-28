@@ -34,7 +34,7 @@ dependencies = [
     "tqdm",
     "hf_transfer",
     "loguru",
-    "transformers==4.45.2",
+    "transformers==5.5.0",
     "accelerate",
     "evaluate",
     "torchtyping",
